@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TY Student Dashboard — Login</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,#0a0a1a 0%,#0d1b3e 50%,#0a0a1a 100%);
+  display:flex;align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;overflow:hidden}
+
+/* Animated background orbs */
+body::before{content:'';position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(124,111,255,0.12),transparent 70%);
+  top:-200px;left:-100px;border-radius:50%;animation:orb1 8s ease-in-out infinite}
+body::after{content:'';position:fixed;width:500px;height:500px;background:radial-gradient(circle,rgba(79,142,247,0.1),transparent 70%);
+  bottom:-150px;right:-50px;border-radius:50%;animation:orb2 10s ease-in-out infinite}
+@keyframes orb1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,40px)}}
+@keyframes orb2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-60px)}}
+
+.container{position:relative;z-index:1;width:100%;max-width:900px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:40px}
+
+/* College Header */
+.college-header{text-align:center}
+.college-header .icon{font-size:56px;display:block;margin-bottom:12px;filter:drop-shadow(0 0 20px rgba(124,111,255,0.5))}
+.college-header h1{font-size:1.8rem;font-weight:800;letter-spacing:0.5px;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.college-header p{color:rgba(255,255,255,0.45);font-size:0.85rem;margin-top:6px}
+
+/* Division showcase buttons (non-clickable, decorative) */
+.div-showcase{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.div-card{
+  padding:16px 28px;border-radius:16px;text-align:center;min-width:180px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
+  cursor:default;user-select:none;position:relative;overflow:hidden;transition:transform .3s;
+}
+.div-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.div-card:hover{transform:translateY(-3px)}
+.div-card.a{border-color:rgba(167,139,250,0.4)}.div-card.a::before{background:linear-gradient(135deg,rgba(167,139,250,0.08),transparent)}
+.div-card.b{border-color:rgba(96,165,250,0.4)}.div-card.b::before{background:linear-gradient(135deg,rgba(96,165,250,0.08),transparent)}
+.div-card.c{border-color:rgba(52,211,153,0.4)}.div-card.c::before{background:linear-gradient(135deg,rgba(52,211,153,0.08),transparent)}
+.div-card:hover::before{opacity:1}
+.div-card .div-name{font-size:1.4rem;font-weight:800;letter-spacing:1px}
+.div-card.a .div-name{color:#a78bfa}
+.div-card.b .div-name{color:#60a5fa}
+.div-card.c .div-name{color:#34d399}
+.div-card .div-label{font-size:0.7rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+.div-card .div-subjects{margin-top:8px;font-size:0.72rem;color:rgba(255,255,255,0.35);line-height:1.6}
+.badge-new{display:inline-block;font-size:0.6rem;padding:1px 6px;border-radius:10px;background:rgba(52,211,153,0.2);color:#34d399;border:1px solid rgba(52,211,153,0.3);margin-left:4px;vertical-align:middle}
+
+/* Login card */
+.login-card{
+  background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1);border-radius:24px;
+  padding:40px 44px;width:420px;box-shadow:0 32px 80px rgba(0,0,0,0.5);
+}
+.login-card h2{font-size:1.2rem;font-weight:700;margin-bottom:28px;text-align:center;color:rgba(255,255,255,0.9)}
+
+label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:8px}
+select,input[type=password]{
+  width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.06);color:#fff;font-size:0.95rem;outline:none;
+  transition:border-color .2s,background .2s;margin-bottom:20px;
+}
+select option{background:#1a1a2e;color:#fff}
+select:focus,input:focus{border-color:#7c6fff;background:rgba(124,111,255,0.1)}
+
+.btn-login{
+  width:100%;padding:15px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#7c6fff,#4f8ef7);
+  color:#fff;font-size:1rem;font-weight:800;cursor:pointer;letter-spacing:0.5px;
+  transition:opacity .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 8px 24px rgba(124,111,255,0.35);
+}
+.btn-login:hover{opacity:0.92;transform:translateY(-2px);box-shadow:0 12px 32px rgba(124,111,255,0.45)}
+.btn-login:active{transform:translateY(0)}
+
+.error{color:#ff6b6b;font-size:0.82rem;text-align:center;margin-top:12px;display:none;padding:8px 12px;background:rgba(255,107,107,0.1);border-radius:8px;border:1px solid rgba(255,107,107,0.2)}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider hr{flex:1;border:none;border-top:1px solid rgba(255,255,255,0.08)}
+.divider span{font-size:0.72rem;color:rgba(255,255,255,0.25);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="college-header">
+    <span class="icon">🎓</span>
+    <h1>TY Student Dashboard</h1>
+    <p>Third Year Computer Science &nbsp;•&nbsp; Academic Year 2024–25</p>
+  </div>
+
+  <!-- Decorative division cards (non-clickable) -->
+  <div class="div-showcase">
+    <div class="div-card a">
+      <div class="div-name">TY — A</div>
+      <div class="div-label">Division A</div>
+      <div class="div-subjects">CC &nbsp;•&nbsp; ML &nbsp;•&nbsp; HPC<br>STQA &nbsp;•&nbsp; IOT</div>
+    </div>
+    <div class="div-card b">
+      <div class="div-name">TY — B</div>
+      <div class="div-label">Division B</div>
+      <div class="div-subjects">CC &nbsp;•&nbsp; ML &nbsp;•&nbsp; HPC<br>Blockchain &nbsp;•&nbsp; Sem. Web</div>
+    </div>
+    <div class="div-card c">
+      <div class="div-name">TY — C</div>
+      <div class="div-label">Division C</div>
+      <div class="div-subjects">CC &nbsp;•&nbsp; ML &nbsp;•&nbsp; HPC<br>STQA &nbsp;•&nbsp; Proj. Mgmt</div>
+    </div>
+  </div>
+
+  <!-- Login form -->
+  <div class="login-card">
+    <h2>🔐 &nbsp;Select Division & Login</h2>
+    <label>Division</label>
+    <select id="division">
+      <option value="">— Choose Division —</option>
+      <option value="A">Division A (TY-A)</option>
+      <option value="B">Division B (TY-B)</option>
+      <option value="C">Division C (TY-C)</option>
+    </select>
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter division password" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">Login →</button>
+    <div class="error" id="err"></div>
+  </div>
+</div>
+<script>
+async function login(){
+  const division=document.getElementById('division').value;
+  const password=document.getElementById('password').value;
+  const err=document.getElementById('err');
+  err.style.display='none';
+  if(!division){err.textContent='Please select a division.';err.style.display='block';return}
+  if(!password){err.textContent='Please enter the password.';err.style.display='block';return}
+  const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({division,password})});
+  const data=await res.json();
+  if(data.success){window.location.href='/dashboard'}
+  else{err.textContent=data.message||'Invalid password. Please try again.';err.style.display='block'}
+}
+</script>
+</body>
+</html>
